@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatroom Socket IO</title>
+</head>
+<body>
+
+    <div id="welcomeDiv">
+
+    </div>
+
+    <div id="pseudo">
+        <p>Renseigner votre pseudo :</p>
+        <input type="text" id="pseudoInput">
+        <button id="submitPseudoBtn">Modifier votre pseudo</button>
+    </div>
+
+    <div id="messagesDiv">
+
+    </div>
+
+    <input type="text" id="messageInput">
+    <button id="submitBtn">Send</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var welcome = document.getElementById('welcomeDiv');
+        var submitPseudoBtn = document.getElementById('submitPseudoBtn')
+        var pseudoInput = document.getElementById('pseudoInput')
+        var messagesDiv = document.getElementById('messagesDiv');
+        var messageInput = document.getElementById('messageInput')
+        var submitBtn = document.getElementById('submitBtn')
+
+        submitBtn.addEventListener('click', () => {
+            console.log(messageInput)
+            socket.emit('message', messageInput.value)
+            messageInput.value = '';
+        })
+
+        submitPseudoBtn.addEventListener('click', () => {
+            //pseudoInput.value = '';
+            console.log('Le pseudo à été modifié en ' + pseudoInput.value)
+            socket.emit('changePseudo', pseudoInput.value)
+        })
+
+        socket.on('welcome', data => {
+            console.log(data)
+            welcome.innerHTML += '<p>' + data + '</p>'
+            welcome.value = '';
+        })
+
+
+
+        socket.on('message', data => {
+            console.log('message received : ', data)
+            messagesDiv.innerHTML += '<p>' + pseudoInput.value + ' a écrit : ' + data + '</p>'
+        })
+    </script>
+</body>
+</html>
